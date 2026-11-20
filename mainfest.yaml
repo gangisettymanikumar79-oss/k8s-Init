@@ -1,12 +1,3 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: mysql
-  namespace: roboshop
-type: Opaque
-data:
-  MYSQL_ALLOW_EMPTY_PASSWORD: "eWVzCg=="
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -51,7 +42,7 @@ spec:
           mountPath: /secrets
     containers:
       - name: mysql
-        image: manigangisetty/mysql:1.0
+        image: manigangisetty/mysql:0.5.0
         args: ["--mysql-native-password=ON"]
         volumeMounts:
         - name: mysql-Secret
