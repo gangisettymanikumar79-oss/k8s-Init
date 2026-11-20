@@ -21,35 +21,34 @@ spec:
         tier: db
         component: mysql
     spec:
-    serviceAccountName: roboshop-mysql
-    initContainers:
-      - name: secret-reader
-        image: amazon/aws-cli
-        command:
-        - sh
-        - c
-        - |
-            aws secretsmanager get-secret-value \
-            --secret-id RoboshopMySQLAsecrectRead \
-            --region us-east-1 \
-            --query SecretString \  
-            --output text
-            {"RoboshopMySQLsecretRead":""} >/secrets/mysql-secret.txt
-            echo "Secret fetched successfully"
-            cat /secrets/mysql-secret.txt # just for testing, we should not do this
-        volumeMounts:
+      serviceAccountName: roboshop-mysql
+      initContainers:
+        - name: secret-reader
+          image: amazon/aws-cli
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              aws secretsmanager get-secret-value \
+                --secret-id RoboshopMySQLAsecrectRead \
+                --region us-east-1 \
+                --query SecretString \
+                --output text > /secrets/mysql-secret.txt
+              echo "Secret fetched successfully"
+          volumeMounts:
+            - name: mysql-secret
+              mountPath: /secrets
+      containers:
+        - name: mysql
+          image: manigangisetty/mysql:1.0
+          args: ["--mysql-native-password=ON"]
+          volumeMounts:
+            - name: mysql-secret
+              mountPath: /data
+      volumes:
         - name: mysql-secret
-          mountPath: /secrets
-    containers:
-      - name: mysql
-        image: manigangisetty/mysql:0.5.0
-        args: ["--mysql-native-password=ON"]
-        volumeMounts:
-        - name: mysql-Secret
-          mountPath: /data
-    volumes:
-      - name: mysql-Secret
-        emptyDir: {}
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
