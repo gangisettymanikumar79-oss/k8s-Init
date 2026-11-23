@@ -41,11 +41,12 @@ spec:
               mountPath: /secrets
       containers:
         - name: mysql
-          image: manigangisetty/mysql:1.0.2
+          image: manigangisetty/mysql:1.0.3
           args: ["--mysql-native-password=ON"]
           volumeMounts:
             - name: mysql-secret
-              mountPath: /data
+              # mountPath: /data
+              mountPath: /secrets
       volumes:
         - name: mysql-secret
           emptyDir: {}
