@@ -31,7 +31,7 @@ spec:
             - |
               set -e
               aws secretsmanager get-secret-value \
-                --secret-id RoboshopMySQLAsecrectRead \
+                --secret-id RoboshopMysqlSecretRead \
                 --region us-east-1 \
                 --query SecretString \
                 --output text > /secrets/mysql-secret.txt
@@ -41,7 +41,7 @@ spec:
               mountPath: /secrets
       containers:
         - name: mysql
-          image: manigangisetty/mysql:1.0.4
+          image: manigangisetty/mysql:1.0.6
           args: ["--mysql-native-password=ON"]
           volumeMounts:
             - name: mysql-secret
